@@ -10,15 +10,42 @@
 (function(){
   const LS_SETTINGS = "aiDashSettings";
   const LS_SNAPSHOT = "aiDashSnapshot";
+  const LS_USAGE    = "aiDashUsage";
   const PROVIDERS = ["anthropic","openai","google","xai"];
   const DEFAULT_MODEL = { anthropic:"claude-sonnet-5", openai:"gpt-5.5", xai:"grok-4" };
+  let memKey = null;  // "use once" key — held in memory only, never written to disk
 
   /* ---------- settings ---------- */
   function getSettings(){
-    try{ return Object.assign({provider:"anthropic",key:"",model:""}, JSON.parse(localStorage.getItem(LS_SETTINGS)||"{}")); }
-    catch(e){ return {provider:"anthropic",key:"",model:""}; }
+    let s={}; try{ s=JSON.parse(localStorage.getItem(LS_SETTINGS)||"{}"); }catch(e){}
+    const out=Object.assign({provider:"anthropic",model:"",save:false,dailyCap:10,key:""}, s);
+    if(!out.save) out.key="";   // never surface a persisted key unless in save mode
+    return out;
   }
-  function saveSettings(s){ localStorage.setItem(LS_SETTINGS, JSON.stringify(s||{})); }
+  // opts: {provider, model, key, save, dailyCap}
+  function saveSettings(o){
+    o=o||{}; const cur=getSettings();
+    const next={ provider:o.provider!=null?o.provider:cur.provider,
+                 model:o.model!=null?o.model:cur.model,
+                 save:!!o.save,
+                 dailyCap:o.dailyCap!=null?(parseInt(o.dailyCap,10)||0):cur.dailyCap };
+    if(next.save){ next.key=(o.key!=null?o.key:cur.key)||""; memKey=null; }
+    else { memKey=(o.key!=null?o.key:memKey)||null; next.key=""; }
+    localStorage.setItem(LS_SETTINGS, JSON.stringify(next));
+    return next;
+  }
+  function getActiveKey(){ const s=getSettings(); return s.save ? (s.key||"") : (memKey||""); }
+  function hasKey(){ return !!getActiveKey(); }
+  function clearKey(){ memKey=null; const s=getSettings(); s.key=""; s.save=false; localStorage.setItem(LS_SETTINGS, JSON.stringify(s)); }
+
+  /* ---------- daily refresh cap (applies to a saved key) ---------- */
+  function getUsage(){
+    const today=new Date().toISOString().slice(0,10);
+    let u={}; try{ u=JSON.parse(localStorage.getItem(LS_USAGE)||"{}"); }catch(e){}
+    if(u.date!==today) u={date:today,count:0};
+    return u;
+  }
+  function bumpUsage(){ const u=getUsage(); u.count++; localStorage.setItem(LS_USAGE, JSON.stringify(u)); }
 
   /* ---------- prompt ---------- */
   function buildPrompt(data){
@@ -165,7 +192,12 @@
   async function run(opts){
     opts=opts||{}; const status=opts.onStatus||function(){};
     const s=getSettings();
-    if(!s.key) throw new Error("No API key set. Open ⚙ Settings first.");
+    const key=getActiveKey();
+    if(!key) throw new Error("No API key set. Open ⚙ Settings first.");
+    if(s.save && s.dailyCap>0){
+      const u=getUsage();
+      if(u.count>=s.dailyCap) throw new Error("Daily refresh cap of "+s.dailyCap+" reached (resets tomorrow). Raise it in ⚙ Settings.");
+    }
     const adapter=ADAPTERS[s.provider];
     if(!adapter) throw new Error("Unknown provider: "+s.provider);
     const data=window.getDashData();
@@ -173,7 +205,7 @@
 
     status("Asking "+provLabel+" for the latest news (web search)…");
     let raw;
-    try{ raw=await adapter(buildPrompt(data), s.key, s.model); }
+    try{ raw=await adapter(buildPrompt(data), key, s.model); }
     catch(e){
       if(/Failed to fetch|NetworkError|CORS/i.test(String(e.message)))
         throw new Error("Network/CORS blocked the call. Try the hosted (GitHub Pages) version, or the Claude Code refresh.");
@@ -192,6 +224,7 @@
 
     try{ localStorage.setItem(LS_SNAPSHOT, JSON.stringify(merged)); }catch(e){}
     window.setDashData(merged);
+    if(s.save && s.dailyCap>0) bumpUsage();
     return { added, provider:provLabel };
   }
 
@@ -207,5 +240,5 @@
     setTimeout(()=>URL.revokeObjectURL(a.href),2000);
   }
 
-  window.AIRefresh={ getSettings, saveSettings, run, downloadData };
+  window.AIRefresh={ getSettings, saveSettings, clearKey, hasKey, getUsage, run, downloadData };
 })();

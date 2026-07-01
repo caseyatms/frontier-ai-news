@@ -116,6 +116,8 @@
   .field input,.field select{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:9px 12px;font-size:13.5px;outline:none}
   .field input:focus,.field select:focus{border-color:var(--accent2)}
   .field .hint{font-size:11.5px;color:var(--dim);margin-top:5px}
+  .field label.opt{display:block;text-transform:none;letter-spacing:0;color:var(--txt);font-weight:400;font-size:12.8px;margin:0 0 8px;cursor:pointer}
+  .field label.opt b{font-weight:700} .field label.opt input{margin-right:7px;vertical-align:middle}
   .trigger-box{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:14px}
   .trigger-box code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;color:var(--accent);flex:1;word-break:break-all}
   .warn{background:rgba(226,169,59,.08);border:1px solid rgba(226,169,59,.25);border-radius:10px;padding:11px 13px;font-size:12px;color:#cdb985;line-height:1.55;margin-bottom:14px}
@@ -185,8 +187,9 @@
     <div class="disc">
       <b>ℹ️ How refresh works.</b> This is a static dashboard whose data lives in <b>data.js</b>. Two ways to update it:
       (1) <b>In-browser</b> — click ⚙ Settings, paste <i>your own</i> AI API key (Anthropic, OpenAI, or xAI), then <b>⚡ Refresh now</b>;
-      the page asks that model for the latest news and saves it to your browser. Your key stays in your browser only — never
-      committed, never sent anywhere but the provider you chose. (2) <b>Claude Code</b> — say "refresh the AI dashboard".
+      the page asks that model for the latest news. Default is <b>use-once</b> (key held in memory only, never saved); you can
+      opt to save it with a daily cap. Your key is sent only to the provider you chose — never committed or shared.
+      (2) <b>Claude Code</b> — say "refresh the AI dashboard".
       Always confirm fast-moving details against the linked primary sources.
     </div>
     <p style="color:var(--dim);margin-top:14px">Open source · BYOK · Not affiliated with any provider. ·
@@ -330,14 +333,15 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 
 /* ---- settings (BYOK) ---- */
 function settingsModal(){
-  const s=(window.AIRefresh&&AIRefresh.getSettings())||{provider:"anthropic",key:"",model:""};
+  const s=(window.AIRefresh&&AIRefresh.getSettings())||{provider:"anthropic",key:"",model:"",save:false,dailyCap:10};
+  const capLinks={ anthropic:"https://console.anthropic.com/settings/limits",
+                   openai:"https://platform.openai.com/settings/organization/limits",
+                   xai:"https://console.x.ai/" };
   openModal(`
     <span class="x" onclick="closeModal()">✕</span>
     <h3>⚙ Settings — bring your own API key</h3>
-    <div class="mdesc">Paste your own key from one provider. It's stored only in this browser (localStorage) and sent
-      only to that provider when you hit Refresh. It is never committed to the repo or shared.</div>
-    <div class="warn">🔐 Anyone with access to this browser profile can read a saved key. On a shared machine, leave it blank
-      and use the Claude Code refresh instead. Hosted (GitHub Pages / https) gives the smoothest API calls.</div>
+    <div class="mdesc">Paste your own key from one provider. It's sent only to that provider when you hit Refresh —
+      never committed to the repo or shared with anyone.</div>
     <div class="field"><label>Provider</label>
       <select id="setProvider">
         <option value="anthropic">Anthropic (Claude) — web search</option>
@@ -345,26 +349,47 @@ function settingsModal(){
         <option value="xai">xAI (Grok) — Live Search</option>
       </select></div>
     <div class="field"><label>API key</label>
-      <input id="setKey" type="password" placeholder="paste your key…" value="${esc(s.key||"")}" autocomplete="off">
+      <input id="setKey" type="password" placeholder="paste your key…" value="${esc(s.save?(s.key||""):"")}" autocomplete="off">
       <div class="hint" id="keyHint"></div></div>
     <div class="field"><label>Model (optional)</label>
       <input id="setModel" type="text" placeholder="leave blank for a sensible default" value="${esc(s.model||"")}">
       <div class="hint" id="modelHint"></div></div>
+    <div class="field"><label>How to handle your key</label>
+      <label class="opt"><input type="radio" name="keymode" value="once" ${!s.save?"checked":""}><b>Use once — don't save</b> (recommended). Kept in memory for this tab only; cleared when you close it.</label>
+      <label class="opt"><input type="radio" name="keymode" value="save" ${s.save?"checked":""}><b>Save in this browser</b> for reuse (localStorage).</label></div>
+    <div id="capSection" class="${s.save?"":"hidden"}">
+      <div class="field"><label>Daily refresh cap (this tool)</label>
+        <input id="setCap" type="number" min="0" step="1" value="${esc(s.dailyCap!=null?s.dailyCap:10)}">
+        <div class="hint">Max refreshes per day this dashboard will run with your saved key. 0 = unlimited.</div></div>
+      <div class="warn">💳 <b>Set a hard spend limit at your provider</b> — the real cap this page can't override:
+        <a href="${capLinks.anthropic}" target="_blank" rel="noopener">Anthropic</a> ·
+        <a href="${capLinks.openai}" target="_blank" rel="noopener">OpenAI</a> ·
+        <a href="${capLinks.xai}" target="_blank" rel="noopener">xAI</a>. Tip: use a dedicated key with a low monthly limit.</div>
+    </div>
+    <div class="warn">🔐 On a shared computer, keep <b>Use once</b> so no key is stored — a saved key can be read by anything with access to this browser profile.</div>
     <div class="row"><button class="btn" onclick="saveSettings()">Save</button>
       <button class="btn ghost" onclick="clearKey()">Clear key</button></div>`);
   $('setProvider').value=s.provider||"anthropic";
   const hints={anthropic:["Get one at console.anthropic.com › API keys","default: claude-sonnet-5"],
                openai:["Get one at platform.openai.com › API keys","default: gpt-5.5"],
                xai:["Get one at console.x.ai","default: grok-4"]};
-  function upd(){ const p=$('setProvider').value; $('keyHint').textContent=hints[p][0]; $('modelHint').textContent=hints[p][1]; }
-  $('setProvider').addEventListener('change',upd); upd();
+  function updHints(){ const p=$('setProvider').value; $('keyHint').textContent=hints[p][0]; $('modelHint').textContent=hints[p][1]; }
+  $('setProvider').addEventListener('change',updHints); updHints();
+  function updMode(){ const save=document.querySelector('input[name="keymode"]:checked').value==="save"; $('capSection').classList.toggle('hidden',!save); }
+  document.querySelectorAll('input[name="keymode"]').forEach(r=>r.addEventListener('change',updMode)); updMode();
 }
 window.settingsModal=settingsModal;
 window.saveSettings=function(){
-  AIRefresh.saveSettings({provider:$('setProvider').value, key:$('setKey').value.trim(), model:$('setModel').value.trim()});
-  closeModal(); setStatus("Settings saved. Click ⚡ Refresh now to pull the latest.","ok");
+  const save=document.querySelector('input[name="keymode"]:checked').value==="save";
+  const key=$('setKey').value.trim();
+  AIRefresh.saveSettings({ provider:$('setProvider').value, key, model:$('setModel').value.trim(),
+    save, dailyCap: save ? Math.max(0,parseInt($('setCap').value||"0",10)||0) : undefined });
+  closeModal();
+  if(!key) setStatus("Saved. Add your key, then click ⚡ Refresh now.","ok");
+  else if(save) setStatus("Key saved in this browser. Click ⚡ Refresh now.","ok");
+  else setStatus("Key ready for this session only (not saved). Click ⚡ Refresh now.","ok");
 };
-window.clearKey=function(){ AIRefresh.saveSettings({provider:$('setProvider').value, key:"", model:$('setModel').value.trim()}); $('setKey').value=""; setStatus("Key cleared.","ok"); };
+window.clearKey=function(){ AIRefresh.clearKey(); const k=$('setKey'); if(k)k.value=""; setStatus("Key cleared.","ok"); };
 
 /* ---- history ---- */
 function historyModal(){
@@ -384,8 +409,7 @@ window.setStatus=setStatus;
 
 async function refreshNow(){
   if(!window.AIRefresh){ setStatus("refresh.js failed to load.","err"); return; }
-  const s=AIRefresh.getSettings();
-  if(!s.key){ setStatus("Add your API key first — opening Settings…","err"); settingsModal(); return; }
+  if(!AIRefresh.hasKey()){ setStatus("Add your API key first — opening Settings…","err"); settingsModal(); return; }
   const btn=$('btnRefreshNow'); btn.disabled=true; const old=btn.textContent; btn.textContent="Refreshing…";
   try{
     const res=await AIRefresh.run({ onStatus:m=>setStatus(m) });
