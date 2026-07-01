@@ -8,10 +8,11 @@
    downloaded to overwrite this file. Nothing here contains secrets.
    ============================================================ */
 window.DASHBOARD_DATA = {
-  lastUpdated: "2026-06-30T21:00:00",
-  version: 4,
+  lastUpdated: "2026-07-01T13:12:00",
+  version: 5,
 
   refreshLog: [
+    { at:"2026-07-01T13:12", added: 3, note:"Added Trump's June 2 frontier-AI security EO (voluntary 30-day pre-release gov access — the backdrop to the GPT-5.6/Mythos preview gates), Microsoft's seven in-house MAI models at Build 2026, and Claude Code's +50% weekly limits (matching Codex). Fable 5 now restored (Jul 1); cleared stale 🆕 flags." },
     { at:"2026-06-30T21:00", added: 6, note:"OpenAI GPT-5.6 Sol/Terra/Luna in limited preview (~20 orgs, per US gov); Anthropic ships Claude Science (pharma/labs flagship, 60+ tools); Gemini 3.5 Pro slips to July (Vertex preview only); Grok 4.5 'may exceed Opus' + monthly from-scratch cadence; Windsurf → Devin Desktop; Terminal-Bench race." },
     { at:"2026-06-30T17:00", added: 46, note:"Added xAI (Grok): Grok 4.1/4.3, Grok 4.5 private beta (V9, ~1.5T), Grok Build CLI + API, Live Search. Packaged as a shareable repo with in-browser BYOK auto-refresh." },
     { at:"2026-06-30T16:00", added: 34, note:"Multi-provider build: Anthropic/OpenAI/Google catalogs + Frontier feed (Fable 5 lifted, Gemini 3.5/Antigravity, GPT-5.5/Codex, Hermes MOA)." }
@@ -31,7 +32,7 @@ window.DASHBOARD_DATA = {
       title:"Musk: Grok 4.5 (V9, ~1.5T) 'may exceed' Claude Opus — private beta",
       body:"Internal SpaceX/Tesla testing only; 'early evals show performance close to, perhaps exceeding Opus' — no independent benchmark yet. V9 is ~3x the V8-small base and was trained with Cursor data. xAI plans a from-scratch model every month through end of 2026.",
       url:"https://cybernews.com/ai-news/musk-grok-4-5-private-beta-superior-claude-opus/" },
-    { date:"2026-06-26", sort:"2026-06-26T09:00", cat:"release", flag:"🆕", src:"VentureBeat",
+    { date:"2026-06-26", sort:"2026-06-26T09:00", cat:"release", flag:"", src:"VentureBeat",
       title:"OpenAI unveils GPT-5.6 Sol/Terra/Luna — limited preview, per US gov",
       body:"New generation with capability-tier naming: Sol (flagship, hardest coding/security), Terra (high-volume business), Luna (fast/cheap). API + Codex to only ~20 trusted orgs after OpenAI shared plans with the US government; general availability 'in the coming weeks.'",
       url:"https://venturebeat.com/technology/openai-unveils-gpt-5-6-sol-terra-and-luna-models-but-only-accessible-to-limited-preview-partners-for-now-per-us-gov" },
@@ -51,6 +52,14 @@ window.DASHBOARD_DATA = {
       title:"Terminal-Bench 2.1: Codex+GPT-5.5 83.4%, Claude Code+Fable 5 83.1%",
       body:"The two leading terminal agents land neck-and-neck on the latest agentic-coding leaderboard as Fable 5 entries post June 17.",
       url:"https://www.morphllm.com/best-ai-coding-agents-2026" },
+    { date:"2026-06-02", sort:"2026-06-02T11:00", cat:"release", flag:"", src:"Microsoft AI",
+      title:"Microsoft launches seven in-house MAI models at Build 2026",
+      body:"Mustafa Suleyman's 'hill-climbing machine' ships a first-party family spanning reasoning (MAI-Thinking-1, a 35B-active MoE at 97% AIME 2025, matching Opus on SWE-Bench Pro), agentic coding (MAI-Code-1-Flash), image (MAI-Image-2.5 / 2.5-Flash), and speech (MAI-Voice-2, MAI-Transcribe-1.5) — Microsoft's push to reduce OpenAI dependence.",
+      url:"https://microsoft.ai/news/building-a-hillclimbing-machine-launching-seven-new-mai-models/" },
+    { date:"2026-06-02", sort:"2026-06-02T10:00", cat:"policy", flag:"", src:"White House",
+      title:"Trump EO sets voluntary frontier-model security framework",
+      body:"'Promoting Advanced Artificial Intelligence Innovation and Security' creates a voluntary process for developers to give agencies up to 30 days of pre-release access to 'covered frontier models' for classified cyber-capability benchmarking — explicitly no mandatory licensing. It's the backdrop to the GPT-5.6 and Mythos 5 'US-gov review' preview gates.",
+      url:"https://www.whitehouse.gov/presidential-actions/2026/06/promoting-advanced-artificial-intelligence-innovation-and-security/" },
     { date:"2026-06-02", sort:"2026-06-02T09:00", cat:"agents", flag:"", src:"The New Stack",
       title:"Windsurf relaunches as Devin Desktop",
       body:"Cognition retired the Windsurf brand, folding the IDE into Devin Desktop — the agent IDE and the async Devin agent under one roof.",
@@ -70,7 +79,11 @@ window.DASHBOARD_DATA = {
     { date:"2026-05-21", sort:"2026-05-21T09:00", cat:"release", flag:"", src:"Google I/O",
       title:"Google I/O 2026: Gemini 3.5, Antigravity, system-level agents",
       body:"Gemini 3.5 Flash outruns Gemini 3.1 Pro on most benchmarks at ~4x speed; Antigravity agentic dev platform + Managed Agents in the Gemini API headline the keynote.",
-      url:"https://blog.google/innovation-and-ai/technology/developers-tools/google-io-2026-developer-highlights/" }
+      url:"https://blog.google/innovation-and-ai/technology/developers-tools/google-io-2026-developer-highlights/" },
+    { date:"2026-05-13", sort:"2026-05-13T09:00", cat:"agents", flag:"", src:"Anthropic",
+      title:"Claude Code weekly limits +50% through July 13 — matching Codex",
+      body:"Anthropic raised Claude Code weekly caps 50% (live for Pro/Max/Team/Enterprise across CLI, IDE, desktop, and web), stacking on a recent 5-hour-limit doubling, at no added price — a move the market read as putting usage 'on par with Codex.' Reverts to baseline after Jul 13 unless extended.",
+      url:"https://apidog.com/blog/claude-code-weekly-limits-50-percent-increase-july-2026/" }
   ],
 
   /* ---------- PROVIDERS ---------- */
@@ -81,7 +94,7 @@ window.DASHBOARD_DATA = {
       models: [
         { name:"Claude Code (CLI)", access:["subscription","api"], iface:"cli", status:"live",
           badge:"Opus 4.8 · Sonnet 5 · Haiku 4.5 · Fable 5*",
-          blurb:"Anthropic's official terminal agent. Runs on a Claude Pro/Max subscription OR API billing. Fable 5 selectable again from Jul 1 (*restoring).",
+          blurb:"Anthropic's official terminal agent. Runs on a Claude Pro/Max subscription OR API billing. Fable 5 restored and selectable again as of Jul 1 (*).",
           url:"https://www.anthropic.com/claude-code" },
         { name:"Claude Science", access:["subscription"], iface:"web", status:"new", badge:"agentic research · 60+ sci tools",
           blurb:"New flagship research app for scientists & pharma — autonomous literature review, computational biology, and drug-discovery workflows over 60+ databases. Included for all paid Claude subscribers; partners incl. Novo Nordisk, AstraZeneca, Eli Lilly.",
@@ -101,7 +114,7 @@ window.DASHBOARD_DATA = {
           blurb:"Desktop app with local MCP server support for tools and file access.", url:"https://claude.ai/download" },
         { name:"Claude API (Messages)", access:["api"], iface:"other", status:"live",
           badge:"Opus 4.8 · Sonnet 5 · Haiku 4.5 · Fable 5* · Mythos 5**",
-          blurb:"Raw programmatic access. Fable 5 restores Jul 1 (*); Mythos 5 limited to ~100 approved orgs (**).", url:"https://docs.anthropic.com/en/api" },
+          blurb:"Raw programmatic access. Fable 5 restored Jul 1 (*); Mythos 5 limited to ~100 approved orgs (**).", url:"https://docs.anthropic.com/en/api" },
         { name:"Bedrock · Vertex · Foundry", access:["api"], iface:"other", status:"live", badge:"cloud marketplaces",
           blurb:"Claude via Amazon Bedrock, Google Vertex AI, and Microsoft Foundry for enterprise.", url:"https://docs.anthropic.com/en/api/claude-on-amazon-bedrock" }
       ],
@@ -145,7 +158,7 @@ window.DASHBOARD_DATA = {
           blurb:"Responses / Chat Completions / Realtime APIs. GPT-5.6 (*) is in limited preview to ~20 trusted orgs.", url:"https://openai.com/index/previewing-gpt-5-6-sol/" }
       ],
       news: [
-        { date:"2026-06-26", sort:"2026-06-26T09:00", cat:"release", flag:"🆕", src:"OpenAI", iface:["cli","other"], access:["api"],
+        { date:"2026-06-26", sort:"2026-06-26T09:00", cat:"release", flag:"", src:"OpenAI", iface:["cli","other"], access:["api"],
           title:"GPT-5.6 Sol/Terra/Luna enter limited preview",
           body:"New generation with capability-tier naming (Sol flagship, Terra value, Luna fast). API + Codex to only ~20 trusted orgs after sharing plans with the US government; general availability 'in the coming weeks.' GPT-4.5 retired from ChatGPT the same week.",
           url:"https://venturebeat.com/technology/openai-unveils-gpt-5-6-sol-terra-and-luna-models-but-only-accessible-to-limited-preview-partners-for-now-per-us-gov" },
