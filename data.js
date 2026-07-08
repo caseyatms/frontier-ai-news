@@ -8,10 +8,11 @@
    downloaded to overwrite this file. Nothing here contains secrets.
    ============================================================ */
 window.DASHBOARD_DATA = {
-  lastUpdated: "2026-07-07T16:23:00",
-  version: 8,
+  lastUpdated: "2026-07-08T13:30:00",
+  version: 9,
 
   refreshLog: [
+    { at:"2026-07-08T13:30", added: 5, note:"GPT-5.6 cleared for public launch Thu Jul 9 (Axios/Reuters — CAISI ran extra tests after the gov-requested delay); Claude Cowork goes cloud/web/mobile Jul 7 (usage data: only 8.7% of sessions are coding); xAI officially rebrands as SpaceXAI with new logo (Jul 6); Illinois signs AI Safety Measures Act (Jul 6, effective 2028); UN Global Dialogue on AI Governance in Geneva. Updated GPT-5.6 catalog badge to the Jul 9 rollout + relabeled xAI tab SpaceXAI. Cleared Jul-4 🆕 flags." },
     { at:"2026-07-07T16:23", added: 6, note:"JadePuffer — first ransomware run end-to-end by an autonomous AI agent (Sysdig, via Langflow CVE-2025-3248); CNBC: Chinese models (GLM 5.2) within a point of Opus 4.8 at ~1/5 cost, >30% of US OpenRouter tokens; OpenAI floats 5% US-gov stake (~$42.6B) ahead of Sept IPO; Fortune: Anthropic overtakes OpenAI on revenue; White House voluntary release-standards deal near-final (FT); state-AI-law midyear tally (109 enacted). Cleared stale 🆕 flags; no provider-catalog changes." },
     { at:"2026-07-06T17:09", added: 6, note:"Same-day top-up: xAI product blitz — Voice Agent Builder beta ($0.05/min, undercuts ElevenLabs/Vapi), Speech-to-Text GA + /goal autonomous mode in Grok Build, Musk's 'Done with Grok Imagine' (Jul 5); FTC proposed AI-accuracy policy statement (Colorado AI Act 'impliedly preempted', comments thru Jul 31); GPT-5.6 Sol to run on Cerebras at 750 tok/s in July; coding-agent pricing shakeup (Copilot flex billing + $100 Max plan). Added Voice Agent Builder to the xAI catalog." },
     { at:"2026-07-06T16:31", added: 9, note:"Claude Sonnet 5 launch (Jun 30 — near-Opus agents at $2/$10 intro, 1M ctx, new Free/Pro default) + Azure/Foundry GA; Fable 5 redeployed Jul 1 with new cyber classifiers; GPT-5.6 leak shows ChatGPT Pro splitting into Luna/Terra/Sol Pro tiers (GA reportedly ~Jul 7); Gemini 3.5 Pro leaks point to Jul 17 with a fresh pretraining run; Meta town hall — agents stalled, 'Watermelon' claims GPT-5.5 parity; SpaceX–Anysphere $60B; Shazeer→OpenAI + Jumper→Anthropic; Claude apps gateway. Cleared stale 🆕 flags." },
@@ -23,10 +24,30 @@ window.DASHBOARD_DATA = {
 
   /* ---------- FRONTIER AI NEWS (provider-agnostic, all major AI + agents) ---------- */
   frontier: [
+    { date:"2026-07-07", sort:"2026-07-07T18:00", cat:"release", flag:"🆕", src:"Engadget",
+      title:"GPT-5.6 cleared for public launch Thursday July 9 — gov review done",
+      body:"The Trump administration approved a broad rollout of GPT-5.6 Sol/Terra/Luna after Commerce's Center for AI Standards and Innovation (CAISI) put the model through additional testing — ending the month-long, government-requested hold that had limited it to ~20 trusted partners. OpenAI will launch publicly Thursday, July 9, per Axios/Reuters.",
+      url:"https://www.engadget.com/2210308/openai-rolls-out-gpt5-6-july-9/" },
+    { date:"2026-07-07", sort:"2026-07-07T16:00", cat:"agents", flag:"🆕", src:"TechCrunch",
+      title:"Claude Cowork goes cloud — web, iOS & Android, tasks that outlive your laptop",
+      body:"Anthropic is moving Cowork sessions to the cloud: start a task on desktop, close the lid, review the result from your phone — scheduled tasks run even with no device online. Beta rolls out to Max users over the coming weeks. Anthropic's own data (1.2M sessions, 600K+ orgs): only 8.7% of Cowork use is software engineering — 90%+ is general knowledge work.",
+      url:"https://techcrunch.com/2026/07/07/the-coding-agent-wars-are-spilling-into-the-rest-of-the-office-claude-cowork/" },
+    { date:"2026-07-07", sort:"2026-07-07T14:00", cat:"policy", flag:"🆕", src:"UN News",
+      title:"UN Global Dialogue on AI Governance opens in Geneva amid 'catastrophic harm' warnings",
+      body:"The first UN Global Dialogue on AI Governance convened July 6-7 in Geneva, pushing for international coordination on frontier-model risks as officials warned of potential 'catastrophic harm' from ungoverned advanced AI — the multilateral counterpoint to Washington's voluntary lab-by-lab deals.",
+      url:"https://news.un.org/en/story/2026/07/1167862" },
     { date:"2026-07-07", sort:"2026-07-07T12:00", cat:"release", flag:"🆕", src:"CNBC",
       title:"Chinese AI models gain ground with US companies as frontier costs surge",
       body:"GLM 5.2 lands within a percentage point of Opus 4.8 on a closely watched agentic benchmark at roughly a fifth of the cost, and Chinese models' share of the tokens US companies route through OpenRouter has held above 30% every week since Feb 8 — peaking at 46% — as OpenAI/Anthropic pricing climbs.",
       url:"https://www.cnbc.com/2026/07/07/chinese-ai-models-costs-us-openai-anthropic.html" },
+    { date:"2026-07-06", sort:"2026-07-06T21:00", cat:"release", flag:"🆕", src:"Engadget",
+      title:"xAI is dead — long live SpaceXAI: rebrand completes with a new logo",
+      body:"xAI officially rechristened itself SpaceXAI on July 6, unveiling a new logo that marks its full merger into SpaceX (the record all-stock acquisition closed February 2). All of Musk's AI development now runs directly under the SpaceX umbrella — with X, the social platform, itself a subsidiary of SpaceXAI.",
+      url:"https://www.engadget.com/2209300/xai-now-officially-spacexai/" },
+    { date:"2026-07-06", sort:"2026-07-06T18:00", cat:"policy", flag:"🆕", src:"WTTW",
+      title:"Illinois signs landmark AI Safety Measures Act — third state frontier-safety law",
+      body:"Gov. Pritzker signed the bipartisan Artificial Intelligence Safety Measures Act on July 6, mandating that AI companies disclose safety practices, report major incidents, and mitigate risks — modeled on California's and New York's frontier laws. Takes effect January 1, 2028, landing squarely against the administration's state-preemption push.",
+      url:"https://news.wttw.com/2026/07/06/pritzker-signs-landmark-ai-regulation-bill-aims-mitigate-risks" },
     { date:"2026-07-06", sort:"2026-07-06T12:00", cat:"policy", flag:"🆕", src:"TechPolicy.Press",
       title:"Midyear tally: states have enacted 109 AI laws despite Trump's preemption push",
       body:"States have passed 109 AI laws and 28 data-center statutes as of July 6, despite the December 2025 EO task force created to sue them. Fewer states are legislating (29, down from 39 in 2025), but they're converging on child-safety, data-center, and consumer-protection bills — the categories the Trump order declined to preempt. Maine's AI moratorium was vetoed; New York's awaits Gov. Hochul.",
@@ -35,11 +56,11 @@ window.DASHBOARD_DATA = {
       title:"Musk declares Grok Imagine 'done' — image/video generation wraps core development",
       body:"A two-word July 5 post — 'Done with Grok Imagine' — signals xAI's image and video generator has finished its build-out phase (announced Aug 2025, beta Oct 2025), moving to a stable, polished state that typically precedes broader rollout or a formal GA announcement.",
       url:"https://www.basenor.com/blogs/news/grok-imagine-is-done-xai-completes-image-generation-feature" },
-    { date:"2026-07-04", sort:"2026-07-04T12:00", cat:"agents", flag:"🆕", src:"BleepingComputer",
+    { date:"2026-07-04", sort:"2026-07-04T12:00", cat:"agents", flag:"", src:"BleepingComputer",
       title:"JadePuffer: first ransomware attack run end-to-end by an autonomous AI agent",
       body:"Sysdig disclosed what it believes is the first fully AI-agent-operated ransomware campaign: initial access via a Langflow RCE (CVE-2025-3248), then autonomous recon, credential theft, lateral movement, persistence, and encryption of 1,342 database config items. The agent adapted in real time — going from a failed login to a working fix in 31 seconds — dropping the skill floor for damaging cyberattacks to the cost of running an agent.",
       url:"https://www.bleepingcomputer.com/news/security/jadepuffer-ransomware-used-ai-agent-to-automate-entire-attack/" },
-    { date:"2026-07-04", sort:"2026-07-04T06:29", cat:"release", flag:"🆕", src:"Geeky Gadgets",
+    { date:"2026-07-04", sort:"2026-07-04T06:29", cat:"release", flag:"", src:"Geeky Gadgets",
       title:"Leaks: Gemini 3.5 Pro targeting July 17 — fresh pretraining run, not a rebase",
       body:"New leaks peg the delayed flagship for a July 17 launch, with Google spending the extra weeks on a new pretraining run instead of reusing the older Gemini 2.5 Pro base — plus a big jump in frontend/UI generation and stronger math. Google hasn't officially confirmed the date or specs.",
       url:"https://www.geeky-gadgets.com/gemini-pro-scraps-base-model/" },
@@ -162,15 +183,7 @@ window.DASHBOARD_DATA = {
     { date:"2026-06-02", sort:"2026-06-02T09:00", cat:"agents", flag:"", src:"The New Stack",
       title:"Windsurf relaunches as Devin Desktop",
       body:"Cognition retired the Windsurf brand, folding the IDE into Devin Desktop — the agent IDE and the async Devin agent under one roof.",
-      url:"https://thenewstack.io/claude-code-vs-cursor-vs-codex-vs-antigravity-2026/" },
-    { date:"2026-05-21", sort:"2026-05-21T09:00", cat:"release", flag:"", src:"Google I/O",
-      title:"Google I/O 2026: Gemini 3.5, Antigravity, system-level agents",
-      body:"Gemini 3.5 Flash outruns Gemini 3.1 Pro on most benchmarks at ~4x speed; Antigravity agentic dev platform + Managed Agents in the Gemini API headline the keynote.",
-      url:"https://blog.google/innovation-and-ai/technology/developers-tools/google-io-2026-developer-highlights/" },
-    { date:"2026-05-13", sort:"2026-05-13T09:00", cat:"agents", flag:"", src:"Anthropic",
-      title:"Claude Code weekly limits +50% through July 13 — matching Codex",
-      body:"Anthropic raised Claude Code weekly caps 50% (live for Pro/Max/Team/Enterprise across CLI, IDE, desktop, and web), stacking on a recent 5-hour-limit doubling, at no added price — a move the market read as putting usage 'on par with Codex.' Reverts to baseline after Jul 13 unless extended.",
-      url:"https://apidog.com/blog/claude-code-weekly-limits-50-percent-increase-july-2026/" }
+      url:"https://thenewstack.io/claude-code-vs-cursor-vs-codex-vs-antigravity-2026/" }
   ],
 
   /* ---------- PROVIDERS ---------- */
@@ -224,8 +237,8 @@ window.DASHBOARD_DATA = {
     openai: {
       label:"OpenAI (ChatGPT/Codex)", accent:"#10a37f",
       models: [
-        { name:"GPT-5.6 (Sol · Terra · Luna)", access:["api"], iface:"other", status:"preview", badge:"limited preview · ~20 orgs",
-          blurb:"Next generation, tiered by capability: Sol (flagship — hardest coding/security), Terra (high-volume business), Luna (fastest/cheapest). API + Codex to ~20 trusted orgs after US-gov review; GA 'in coming weeks.' Pricing/1M: Sol $5/$30, Terra $2.50/$15, Luna $1/$6.",
+        { name:"GPT-5.6 (Sol · Terra · Luna)", access:["api"], iface:"other", status:"preview", badge:"public launch Jul 9 · gov-cleared",
+          blurb:"Next generation, tiered by capability: Sol (flagship — hardest coding/security), Terra (high-volume business), Luna (fastest/cheapest). US gov approved the broad rollout Jul 7 after CAISI's extra testing; public launch set for Thursday Jul 9. Pricing/1M: Sol $5/$30, Terra $2.50/$15, Luna $1/$6.",
           url:"https://openai.com/index/previewing-gpt-5-6-sol/" },
         { name:"Codex CLI", access:["subscription","api"], iface:"cli", status:"live", badge:"GPT-5.5 · GPT-5.6 (preview)",
           blurb:"OpenAI's terminal coding agent. Runs on a ChatGPT Plus/Pro subscription OR API billing. ~4M weekly devs; select sessions already trialing GPT-5.6.", url:"https://openai.com/codex/" },
@@ -305,7 +318,7 @@ window.DASHBOARD_DATA = {
     },
 
     xai: {
-      label:"xAI (Grok)", accent:"#111827",
+      label:"SpaceXAI (Grok)", accent:"#111827",
       models: [
         { name:"Grok Build CLI", access:["subscription","api"], iface:"cli", status:"new", badge:"Grok Build 0.1 · grok-code-fast-1",
           blurb:"xAI's terminal coding agent — plan, debug, MCP support, and the new /goal long-running autonomous mode. Early beta for SuperGrok / X Premium+; the model is also on the API.", url:"https://devops.com/xai-opens-grok-build-0-1-to-developers-via-api/" },
