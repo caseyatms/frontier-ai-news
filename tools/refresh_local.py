@@ -23,6 +23,10 @@ def archive(args):
     os.makedirs(ARCHIVE, exist_ok=True)
     ts = datetime.datetime.now().strftime("%Y-%m-%dT%H%M%S")
     dest = os.path.join(ARCHIVE, f"data.{ts}.js")
+    n = 1
+    while os.path.exists(dest):  # same-second rerun: keep both snapshots
+        dest = os.path.join(ARCHIVE, f"data.{ts}.{n}.js")
+        n += 1
     shutil.copy2(DATA, dest)
     print(f"[archived] {dest}")
     if args.note:
