@@ -149,7 +149,7 @@ function settingsModal(){
                    openai:"https://platform.openai.com/settings/organization/limits",
                    xai:"https://console.x.ai/" };
   openModal(`
-    <span class="x" onclick="closeModal()">✕</span>
+    <span class="x" id="setClose">✕</span>
     <h3>⚙ Settings — bring your own API key</h3>
     <div class="mdesc">Paste your own key from one provider. It's sent only to that provider when you hit Refresh —
       never committed to the repo or shared with anyone.</div>
@@ -178,8 +178,11 @@ function settingsModal(){
         <a href="${capLinks.xai}" target="_blank" rel="noopener">xAI</a>. Tip: use a dedicated key with a low monthly limit.</div>
     </div>
     <div class="warn">🔐 On a shared computer, keep <b>Use once</b> so no key is stored — a saved key can be read by anything with access to this browser profile.</div>
-    <div class="row"><button class="btn" onclick="saveSettings()">Save</button>
-      <button class="btn ghost" onclick="clearKey()">Clear key</button></div>`);
+    <div class="row"><button class="btn" id="setSave">Save</button>
+      <button class="btn ghost" id="setClear">Clear key</button></div>`);
+  $('setClose').addEventListener('click',closeModal);
+  $('setSave').addEventListener('click',saveSettings);
+  $('setClear').addEventListener('click',clearKey);
   $('setProvider').value=s.provider||"anthropic";
   const hints={anthropic:["Get one at console.anthropic.com › API keys","default: claude-sonnet-5"],
                openai:["Get one at platform.openai.com › API keys","default: gpt-5.5"],
@@ -206,13 +209,15 @@ window.clearKey=function(){ AIRefresh.clearKey(); const k=$('setKey'); if(k)k.va
 /* ---- history ---- */
 function historyModal(){
   const log=(DATA&&DATA.refreshLog)||[];
-  const dl = `<button class="btn ghost" onclick="AIRefresh.downloadData()">⬇ Download data.js</button>`;
-  openModal(`<span class="x" onclick="closeModal()">✕</span><h3>🕓 Refresh history</h3>
+  const dl = `<button class="btn ghost" id="histDownload">⬇ Download data.js</button>`;
+  openModal(`<span class="x" id="histClose">✕</span><h3>🕓 Refresh history</h3>
     <div class="mdesc">Each refresh is logged here and cached in your browser. Download the current snapshot to commit it back to the repo.</div>
     <div style="margin-bottom:14px">${dl}</div>
     <div class="hist">${log.length? log.map(h=>`<div class="h">
       <div class="hd">${new Date(h.at).toLocaleString(undefined,{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'})} · +${esc(h.added)} items</div>
       <div class="hn">${esc(h.note)}</div></div>`).join("") : `<div class="empty">No refreshes logged yet.</div>`}</div>`);
+  $('histClose').addEventListener('click',closeModal);
+  $('histDownload').addEventListener('click',()=>AIRefresh.downloadData());
 }
 
 /* ---- refresh status ---- */
