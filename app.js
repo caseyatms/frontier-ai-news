@@ -49,7 +49,7 @@ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,c=>({'&':'&amp;'
 function safeUrl(u){ u=String(u||""); return /^https?:\/\//i.test(u)? u : "#"; }
 function fmt(d){ const [y,m,day]=String(d).split("-").map(Number); const mo=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][(m||1)-1]; return `${mo} ${day||""}, ${y||""}`; }
 const asArr = v => Array.isArray(v)?v:[v];
-const match = (q,txt) => !q || txt.toLowerCase().includes(q);
+const match = (q,txt) => !q || txt.toLowerCase().includes(q.trim().toLowerCase());
 const catClass = c => ["release","agents","policy","official","report","analysis","cloud"].includes(c)? c : "other";
 
 function newsItemHTML(n){
@@ -99,7 +99,7 @@ function renderProvider(){
 function wireFeedControls(){
   document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{state.cat=c.dataset.cat;render();}));
   const s=$('search');
-  if(s) s.addEventListener('input',e=>{state.q=e.target.value.toLowerCase().trim();render();const el=$('search');if(el){el.focus();const v=el.value;el.setSelectionRange(v.length,v.length);}});
+  if(s) s.addEventListener('input',e=>{const pos=e.target.selectionStart;state.q=e.target.value;render();const el=$('search');if(el){el.focus();el.setSelectionRange(pos,pos);}});
 }
 
 function renderCrumb(){
@@ -243,7 +243,7 @@ $('btnHistory').addEventListener('click',historyModal);
 $('ghlink').href=GITHUB_URL;
 
 /* ---- clock ---- */
-function tick(){ const c=$('clock'); if(c) c.innerHTML=`Now: <b>${new Date().toLocaleString()}</b>`; }
+function tick(){ const c=$('clock'); if(c) c.innerHTML=`Now: <b>${new Date().toLocaleString(undefined,{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'})}</b>`; }
 tick(); setInterval(tick,1000*30);
 
 /* ---- boot ---- */
