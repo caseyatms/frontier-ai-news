@@ -116,7 +116,6 @@ function syncNavActive(){
   $('navSecondary').classList.toggle('hidden',!prov); $('navTertiary').classList.toggle('hidden',!prov);
 }
 function render(){ if(!DATA)return; syncNavActive(); renderCrumb(); state.tab==="frontier"?renderFrontier():renderProvider(); }
-window.renderDashboard = render;
 
 /* ---- nav wiring ---- */
 document.querySelectorAll('#navPrimary .tab').forEach(t=>t.addEventListener('click',()=>{state.tab=t.dataset.tab;state.cat="all";state.q="";render();}));
@@ -133,7 +132,6 @@ function updateFreshness(){
   $('refreshTxt').innerHTML=`Data snapshot from <b>${label}</b> · ${ageTxt}. Not scheduled — refresh on demand.`;
   $('refreshbar').classList.toggle('stale',d>=3);
 }
-window.updateFreshness = updateFreshness;
 
 /* ---- modal ---- */
 function openModal(html){ $('modalBody').innerHTML=html; $('modalBg').classList.add('show'); }
@@ -187,7 +185,7 @@ function settingsModal(){
   const hints={anthropic:["Get one at console.anthropic.com › API keys","default: claude-sonnet-5"],
                openai:["Get one at platform.openai.com › API keys","default: gpt-5.5"],
                xai:["Get one at console.x.ai","default: grok-4"]};
-  function updHints(){ const p=$('setProvider').value; $('keyHint').textContent=hints[p][0]; $('modelHint').textContent=hints[p][1]; }
+  function updHints(){ const p=$('setProvider').value, h=hints[p]||hints.anthropic; $('keyHint').textContent=h[0]; $('modelHint').textContent=h[1]; }
   $('setProvider').addEventListener('change',updHints); updHints();
   function updMode(){ const save=document.querySelector('input[name="keymode"]:checked').value==="save"; $('capSection').classList.toggle('hidden',!save); }
   document.querySelectorAll('input[name="keymode"]').forEach(r=>r.addEventListener('change',updMode)); updMode();
@@ -222,7 +220,6 @@ function historyModal(){
 
 /* ---- refresh status ---- */
 function setStatus(msg,cls){ const el=$('rstatus'); el.className="rstatus"+(cls?" "+cls:""); el.textContent=msg||""; }
-window.setStatus=setStatus;
 
 async function refreshNow(){
   if(!window.AIRefresh){ setStatus("refresh.js failed to load.","err"); return; }
