@@ -2,20 +2,34 @@ const $ = id => document.getElementById(id);
 const contentEl = $('content'), crumbEl = $('crumb');
 const GITHUB_URL = "https://github.com/caseyatms/frontier-ai-news";
 
-/* ---- load newest of shipped data.js vs cached browser snapshot ---- */
+/* ---- shared data shape guard (refresh.js relies on window.isDashData) ---- */
+function isDashData(d){
+  return !!(d && typeof d==="object" &&
+    typeof d.lastUpdated==="string" && !isNaN(new Date(d.lastUpdated)) &&
+    Array.isArray(d.frontier) && d.frontier.length>0 &&
+    d.providers && ["anthropic","openai","google","xai"].every(k=>{
+      const p=d.providers[k];
+      return p && typeof p.label==="string" && Array.isArray(p.models) && Array.isArray(p.news);
+    }));
+}
+
+/* ---- load newest of shipped data.js vs cached browser snapshot ----
+   Both sources must pass the shape guard: a bad snapshot falls back to the
+   shipped data, and bad shipped data falls back to the warning box. */
 function loadData(){
-  let data = window.DASHBOARD_DATA;
+  const shipped = isDashData(window.DASHBOARD_DATA) ? window.DASHBOARD_DATA : null;
+  let cached = null;
   try{
-    const cached = JSON.parse(localStorage.getItem('aiDashSnapshot')||"null");
-    if(cached && cached.lastUpdated && (!data || new Date(cached.lastUpdated) >= new Date(data.lastUpdated))){
-      data = cached;
-    }
+    const snap = JSON.parse(localStorage.getItem('aiDashSnapshot')||"null");
+    if(isDashData(snap)) cached = snap;
   }catch(e){}
-  return data;
+  if(cached && (!shipped || new Date(cached.lastUpdated) >= new Date(shipped.lastUpdated))) return cached;
+  return shipped;
 }
 let DATA = loadData();
 window.getDashData = () => DATA;
 window.setDashData = d => { DATA = d; };
+window.isDashData = isDashData;
 
 const PROV_META = {
   frontier:{label:"Frontier AI News", accent:"#5b8def"},
@@ -62,7 +76,8 @@ function renderFrontier(){
 }
 
 function renderProvider(){
-  const p=DATA.providers[state.tab];
+  const p=DATA.providers && DATA.providers[state.tab];
+  if(!p){ contentEl.innerHTML=`<div class="empty">No data for this provider yet. Try another tab or refresh.</div>`; return; }
   const models=(p.models||[]).filter(m=>asArr(m.access).includes(state.access)&&asArr(m.iface).includes(state.iface))
     .filter(m=>match(state.q,(m.name+m.blurb+(m.badge||""))));
   let rel=(p.news||[]).filter(n=>(!n.iface||asArr(n.iface).includes(state.iface))&&(!n.access||asArr(n.access).includes(state.access)));
@@ -70,7 +85,7 @@ function renderProvider(){
   rel=rel.filter(n=>match(state.q,(n.title+n.body+n.src))).sort((a,b)=>(a.sort||a.date)<(b.sort||b.date)?1:-1);
   const modelsHTML= models.length? `<div class="mgrid">${models.map(m=>`
     <div class="mcard"><div class="mh"><div><div class="mn">${esc(m.name)}</div>${m.badge?`<div class="badge2">${esc(m.badge)}</div>`:""}</div>
-      <span class="stpill st-${catClass(m.status)==='other'?'live':esc(m.status)}">${esc(m.status)}</span></div>
+      <span class="stpill st-${["live","new","limited","restricted","preview"].includes(m.status)?esc(m.status):"live"}">${esc(m.status)}</span></div>
       <p>${esc(m.blurb)}</p>${m.url?`<a class="read" href="${safeUrl(m.url)}" target="_blank" rel="noopener">Learn more →</a>`:""}</div>`).join("")}</div>`
     : `<div class="empty">No ${esc(IFACE_LBL[state.iface])} for ${esc(ACCESS_LBL[state.access])} access here yet.<br>Try another interface/access tab — or refresh.</div>`;
   contentEl.innerHTML=`
@@ -178,7 +193,8 @@ window.settingsModal=settingsModal;
 window.saveSettings=function(){
   const save=document.querySelector('input[name="keymode"]:checked').value==="save";
   const key=$('setKey').value.trim();
-  AIRefresh.saveSettings({ provider:$('setProvider').value, key, model:$('setModel').value.trim(),
+  $('setKey').value="";  // keep the typed key out of the hidden modal DOM
+  AIRefresh.saveSettings({ provider:$('setProvider').value, key:key||undefined, model:$('setModel').value.trim(),
     save, dailyCap: save ? Math.max(0,parseInt($('setCap').value||"0",10)||0) : undefined });
   closeModal();
   if(!key) setStatus("Saved. Add your key, then click ⚡ Refresh now.","ok");
