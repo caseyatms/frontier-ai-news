@@ -58,6 +58,9 @@ The page calls that provider, merges the new headlines in (de-duped), and saves 
 browser so it sticks across reloads. Want to share your refreshed snapshot back to the repo?
 **🕓 History → ⬇ Download data.js** and replace the file.
 
+> Merged lists are **capped**: the Frontier feed keeps the newest 40 items and each provider feed the newest 30.
+> Items that age past the cap drop out of fresh snapshots, but they survive in git history (and in `archive/` if you use the local helper).
+
 > **Cost:** a refresh is a single model call with web search — typically a few cents or less. Nothing runs on a schedule; it only calls the API when *you* click Refresh.
 
 ### 🔐 About your key (please read)
