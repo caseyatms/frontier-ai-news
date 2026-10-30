@@ -197,10 +197,11 @@
     if(s.save && s.dailyCap>0){
       const u=getUsage();
       if(u.count>=s.dailyCap) throw new Error("Daily refresh cap of "+s.dailyCap+" reached (resets tomorrow). Raise it in ⚙ Settings.");
+      bumpUsage();  // count at call time so a second tab can't pass the same check
     }
     const adapter=ADAPTERS[s.provider];
     if(!adapter) throw new Error("Unknown provider: "+s.provider);
-    const data=window.getDashData();
+    let data=window.getDashData();
     const provLabel={anthropic:"Anthropic",openai:"OpenAI",xai:"xAI (Grok)"}[s.provider];
 
     status("Asking "+provLabel+" for the latest news (web search)…");
@@ -216,6 +217,11 @@
     const parsed=extractJSON(raw);
 
     status("Merging + de-duplicating…");
+    // Merge onto the freshest base: another tab may have refreshed while this call was in flight.
+    try{
+      const snap=JSON.parse(localStorage.getItem(LS_SNAPSHOT)||"null");
+      if(snap && snap.lastUpdated && (!data || new Date(snap.lastUpdated) >= new Date(data.lastUpdated))) data=snap;
+    }catch(e){}
     const { data:merged, added }=merge(data, parsed);
     merged.lastUpdated=new Date().toISOString();
     merged.refreshLog=[{ at:merged.lastUpdated, added,
@@ -224,7 +230,6 @@
 
     try{ localStorage.setItem(LS_SNAPSHOT, JSON.stringify(merged)); }catch(e){}
     window.setDashData(merged);
-    if(s.save && s.dailyCap>0) bumpUsage();
     return { added, provider:provLabel };
   }
 
