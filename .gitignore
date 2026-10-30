@@ -7,3 +7,11 @@ archive/
 *.local.js
 *.secret
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa*
+
+# Local agent tooling config
+.claude/
