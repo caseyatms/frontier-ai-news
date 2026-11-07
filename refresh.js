@@ -132,6 +132,10 @@
     return "Provider returned HTTP "+resp.status+snip;
   }
 
+  // Set when the OpenAI adapter had to fall back to a call without web
+  // search, so run() can note it in the refresh log.
+  let lastFallbackNoSearch=false;
+
   async function callAnthropic(prompt, key, model){
     const url="https://api.anthropic.com/v1/messages";
     const headers={ "content-type":"application/json","x-api-key":key,
@@ -146,7 +150,7 @@
       return (j.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
     }
     try{ return await go(true); }
-    catch(e){ if(/web_search|tool|400/i.test(e.message)) return await go(false); throw e; }
+    catch(e){ if(/400/.test(e.message)&&/web_search/i.test(e.message)) return await go(false); throw e; }
   }
 
   async function callOpenAI(prompt, key, model){
@@ -162,9 +166,15 @@
       if(out.trim()) return out.trim();
       throw new Error("Empty Responses output.");
     }catch(e){
-      // fallback: chat/completions (no web search)
+      // Fall back to chat/completions (no web search) only when the Responses
+      // API rejects the search tool itself (HTTP 400 mentioning web_search or
+      // tools). Anything else - auth, rate limit, network, empty output -
+      // must surface as-is; a refresh merged without web search is worse than
+      // a failed one.
+      if(!/400/.test(e.message)||!/web_search|tool/i.test(e.message)) throw e;
+      lastFallbackNoSearch=true;
       const r=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers,
-        body:JSON.stringify({ model: model||"gpt-4o", messages:[{role:"user",content:prompt}] })});
+        body:JSON.stringify({ model: model||DEFAULT_MODEL.openai, messages:[{role:"user",content:prompt}] })});
       if(!r.ok) throw new Error(await readErr(r));
       const j=await r.json();
       return (((j.choices||[])[0]||{}).message||{}).content||"";
@@ -183,7 +193,7 @@
       return (((j.choices||[])[0]||{}).message||{}).content||"";
     }
     try{ return await go(true); }
-    catch(e){ if(/search|400/i.test(e.message)) return await go(false); throw e; }
+    catch(e){ if(/400/.test(e.message)&&/search_parameters|Live Search/i.test(e.message)) return await go(false); throw e; }
   }
 
   const ADAPTERS = { anthropic:callAnthropic, openai:callOpenAI, xai:callXAI };
@@ -204,6 +214,7 @@
     const provLabel={anthropic:"Anthropic",openai:"OpenAI",xai:"xAI (Grok)"}[s.provider];
 
     status("Asking "+provLabel+" for the latest news (web search)…");
+    lastFallbackNoSearch=false;
     let raw;
     try{ raw=await adapter(buildPrompt(data), key, s.model); }
     catch(e){
@@ -219,7 +230,7 @@
     const { data:merged, added }=merge(data, parsed);
     merged.lastUpdated=new Date().toISOString();
     merged.refreshLog=[{ at:merged.lastUpdated, added,
-      note:"In-browser refresh via "+provLabel+(s.model?" ("+s.model+")":"")+". +"+added+" items." }]
+      note:"In-browser refresh via "+provLabel+(s.model?" ("+s.model+")":"")+(lastFallbackNoSearch?" (no-web-search fallback)":"")+". +"+added+" items." }]
       .concat(merged.refreshLog||[]).slice(0,40);
 
     try{ localStorage.setItem(LS_SNAPSHOT, JSON.stringify(merged)); }catch(e){}
