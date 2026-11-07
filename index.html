@@ -274,7 +274,7 @@ function renderProvider(){
   rel=rel.filter(n=>match(state.q,(n.title+n.body+n.src))).sort((a,b)=>(a.sort||a.date)<(b.sort||b.date)?1:-1);
   const modelsHTML= models.length? `<div class="mgrid">${models.map(m=>`
     <div class="mcard"><div class="mh"><div><div class="mn">${esc(m.name)}</div>${m.badge?`<div class="badge2">${esc(m.badge)}</div>`:""}</div>
-      <span class="stpill st-${catClass(m.status)==='other'?'live':esc(m.status)}">${esc(m.status)}</span></div>
+      <span class="stpill st-${["live","new","limited","restricted","preview"].includes(m.status)?esc(m.status):"live"}">${esc(m.status)}</span></div>
       <p>${esc(m.blurb)}</p>${m.url?`<a class="read" href="${safeUrl(m.url)}" target="_blank" rel="noopener">Learn more →</a>`:""}</div>`).join("")}</div>`
     : `<div class="empty">No ${esc(IFACE_LBL[state.iface])} for ${esc(ACCESS_LBL[state.access])} access here yet.<br>Try another interface/access tab — or refresh.</div>`;
   contentEl.innerHTML=`
