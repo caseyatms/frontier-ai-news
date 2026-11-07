@@ -382,7 +382,8 @@ window.settingsModal=settingsModal;
 window.saveSettings=function(){
   const save=document.querySelector('input[name="keymode"]:checked').value==="save";
   const key=$('setKey').value.trim();
-  AIRefresh.saveSettings({ provider:$('setProvider').value, key, model:$('setModel').value.trim(),
+  $('setKey').value="";  // keep the typed key out of the hidden modal DOM
+  AIRefresh.saveSettings({ provider:$('setProvider').value, key:key||undefined, model:$('setModel').value.trim(),
     save, dailyCap: save ? Math.max(0,parseInt($('setCap').value||"0",10)||0) : undefined });
   closeModal();
   if(!key) setStatus("Saved. Add your key, then click ⚡ Refresh now.","ok");
