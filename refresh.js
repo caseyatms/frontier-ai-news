@@ -201,6 +201,7 @@
     const adapter=ADAPTERS[s.provider];
     if(!adapter) throw new Error("Unknown provider: "+s.provider);
     const data=window.getDashData();
+    if(!window.isDashData(data)) throw new Error("No dashboard data loaded - restore data.js first.");
     const provLabel={anthropic:"Anthropic",openai:"OpenAI",xai:"xAI (Grok)"}[s.provider];
 
     status("Asking "+provLabel+" for the latest news (web search)…");
